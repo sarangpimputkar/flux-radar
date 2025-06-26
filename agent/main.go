@@ -84,10 +84,11 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		panic(err.Error())
-	}
+	// Uncomment the following lines if you want to use the Kubernetes clientset to fetch native resources
+	// clientset, err := kubernetes.NewForConfig(config)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
 	dyn, err := dynamic.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
@@ -99,7 +100,7 @@ func main() {
 			Resources:   []Resource{},
 		}
 
-		// Kubernetes native resources
+		// Kubernetes native resources - uncomment to fetch native resources
 		// addK8sResources(clientset, &payload, namespaces)
 
 		// FluxCD CRDs

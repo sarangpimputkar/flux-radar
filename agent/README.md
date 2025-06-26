@@ -1,12 +1,12 @@
 # Flux Radar Agent
 
-Flux Radar Agent is a lightweight Go microservice that collects the status of Kubernetes native and FluxCD resources from the cluster it runs on. It periodically sends this data to the Flux Radar Controller for centralized monitoring and visualization.
+Flux Radar Agent is a lightweight Go microservice that collects the status of FluxCD resources ( and optionally Kubernetes native resources) from the cluster it runs on. It periodically sends this data to the Flux Radar Dashboard for centralized monitoring and visualization.
 
 ## Features
 
 - Collects status for:
-  - Kubernetes native resources: Pods, Nodes, Services, Deployments, StatefulSets, Jobs
   - FluxCD custom resources: HelmRelease, Kustomization, GitRepository, HelmRepository, OCIRepository, HelmChart, Notification, ImageAutomation
+  - Optionally -  Kubernetes native resources: Pods, Nodes, Services, Deployments, StatefulSets, Jobs (uncomment this in main.go if required)
 - Sends resource status as JSON to the controller via REST API
 - Configurable collection interval and controller endpoint
 - Supports secure HTTPS communication with trusted or custom CA certificates
