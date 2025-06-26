@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux-radar-agent
+  namespace: flux-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flux-radar-agent
+  template:
+    metadata:
+      labels:
+        app: flux-radar-agent
+    spec:
+      serviceAccountName: helm-controller
+      containers:
+        - name: flux-radar-agent
+          image: flux-radar-agent:0.0.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CLUSTER_NAME
+              value: "dev-cluster-001"
+            - name: CONTROLLER_URL
+              value: "https://flux-radar-ui:8443/api/data"
+            - name: INSECURE_SKIP_VERIFY
+              value: "true"
+            - name: NAMESPACES
+              value: "dev-namespace1,dev-namespace2,qa-namespace1,frontend-namespace,backend-namespace"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---

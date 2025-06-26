@@ -1,0 +1,97 @@
+{
+    "clusterName" : "dev-cluster",
+    "resources" : [
+        {
+            "kind" : "GitRepository",
+            "resourceType" : "fluxcd",
+            "name" : "flux-radar-agent",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Ready",
+                        "message" : "GitRepository is ready"
+                    }
+                ]}
+        },
+        {
+            "kind" : "Kustomization",
+            "resourceType" : "fluxcd",
+            "name" : "flux-radar-agent",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Ready",
+                        "message" : "Kustomization is ready"
+                    }
+                ]}
+        },
+        {
+            "kind" : "HelmRelease",
+            "resourceType" : "fluxcd",
+            "name" : "flux-radar-agent",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Ready",
+                        "message" : "HelmRelease is ready"
+                    }
+                ]}
+        },
+        {
+            "kind" : "Deployment",
+            "resourceType" : "k8s",
+            "name" : "flux-radar-agent",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Available",
+                        "message" : "Deployment is available"
+                    }
+                ]}
+        },
+        {
+            "kind" : "Service",
+            "resourceType" : "k8s",
+            "name" : "flux-radar-agent",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Ready",
+                        "message" : "Service is ready"
+                    }
+                ]}
+        },
+        {
+            "kind" : "Pod",
+            "resourceType" : "k8s",
+            "name" : "flux-radar-agent-1234567890-abcde",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Ready",
+                        "message" : "Pod is ready"
+                    }
+                ]}
+        },
+        {
+            "kind" : "Job",
+            "resourceType" : "k8s",
+            "name" : "flux-radar-agent-job",
+            "namespace" : "flux-radar",
+            "status" : {
+                "conditions" : [
+                    {
+                        "type" : "Ready",
+                        "message" : "completed successfully"
+                    }
+                ]}
+        }
+
+    ]
+}

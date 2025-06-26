@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux-radar-ui
+  namespace: flux-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flux-radar-ui
+  template:
+    metadata:
+      labels:
+        app: flux-radar-ui
+    spec:
+      containers:
+        - name: nginx-proxy
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8443
+              name: https
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          volumeMounts:
+            - name: var-cache
+              mountPath: /var/cache/nginx
+            - name: var-run
+              mountPath: /var/run
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+        - name: flux-radar-ui
+          image: flux-radar-ui:0.0.9
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1
+              memory: 1Gi
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      serviceAccountName: helm-controller
+      volumes:
+        - name: var-cache
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flux-radar-ui
+  namespace: flux-system
+spec: 
+  selector:
+    app: flux-radar-ui
+  ports:
+    - name: https-nginx
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+    - name: http-api
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx
+  namespace: flux-system
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    http {
+        server {
+          listen 8443 ssl;
+          server_name localhost;
+          ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
+          ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
+          ssl_session_cache   shared:SSL:10m;
+          ssl_session_timeout 1h;
+          ssl_buffer_size     8k;
+
+          location / {
+              proxy_pass         http://0.0.0.0:3000;
+              proxy_set_header   Host $host;
+              proxy_set_header   X-Real-IP $remote_addr;
+              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header   X-Forwarded-Host $server_name;
+              proxy_set_header   Upgrade $http_upgrade;
+              proxy_set_header   Connection 'upgrade';
+              proxy_cache_bypass $http_upgrade;
+          }
+        }
+      }
+
+---
