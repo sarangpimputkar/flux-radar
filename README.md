@@ -4,6 +4,9 @@ Flux Radar is a simple lightweight read-only dashboard to show status of your Fl
 It can be deployed to single k8s cluster or multiple cluster in distributed mode.
 Optionally it can also collect status of k8s resources.
 
+Dashboard: 
+![UI](./flux-radar-screenshot.png)
+
 ## Components
 
 - flux radar ui - This is deployed central k8s cluster. It receives data from agents on HTTP(S) API , stored in memory and displays on dashboard.
